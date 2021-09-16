@@ -252,7 +252,7 @@ def main():
                         help="Which variant to use.")
     parser.add_argument("--pretrained_dir", type=str, default="checkpoint/ViT-B_16.npz",
                         help="Where to search for pretrained ViT models.")
-    parser.add_argument("--output_dir", default="output", type=str,
+    parser.add_argument("--output_dir", default="no_pretrain_output", type=str,
                         help="The output directory where checkpoints will be written.")
 
     parser.add_argument("--img_size", default=224, type=int,
