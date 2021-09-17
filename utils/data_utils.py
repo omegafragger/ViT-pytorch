@@ -34,7 +34,7 @@ def get_loader(args):
                                    download=True,
                                    transform=transform_test) if args.local_rank in [-1, 0] else None
 
-    else:
+    elif args.dataset == "cifar100":
         trainset = datasets.CIFAR100(root="./data",
                                      train=True,
                                      download=True,
@@ -43,18 +43,28 @@ def get_loader(args):
                                     train=False,
                                     download=True,
                                     transform=transform_test) if args.local_rank in [-1, 0] else None
+    elif args.dataset == "svhn":
+        trainset = datasets.SVHN(root='./data',
+                                 split='train',
+                                 download=True,
+                                 transform=transform_train)
+        testset = datasets.SVHN(root='./data',
+                                split='test',
+                                download=True,
+                                transform=transform_test)
+        
     if args.local_rank == 0:
         torch.distributed.barrier()
 
-    train_sampler = RandomSampler(trainset) if args.local_rank == -1 else DistributedSampler(trainset)
-    test_sampler = SequentialSampler(testset)
+    # train_sampler = RandomSampler(trainset) if args.local_rank == -1 else DistributedSampler(trainset)
+    # test_sampler = SequentialSampler(testset)
     train_loader = DataLoader(trainset,
-                              sampler=train_sampler,
+                              shuffle=True,
                               batch_size=args.train_batch_size,
                               num_workers=4,
                               pin_memory=True)
     test_loader = DataLoader(testset,
-                             sampler=test_sampler,
+                             shuffle=False,
                              batch_size=args.eval_batch_size,
                              num_workers=4,
                              pin_memory=True) if testset is not None else None

@@ -268,9 +268,11 @@ class VisionTransformer(nn.Module):
 
         self.transformer = Transformer(config, img_size, vis)
         self.head = Linear(config.hidden_size, num_classes)
+        self.feature = None
 
     def forward(self, x, labels=None):
         x, attn_weights = self.transformer(x)
+        self.feature = x[:, 0]
         logits = self.head(x[:, 0])
 
         if labels is not None:
